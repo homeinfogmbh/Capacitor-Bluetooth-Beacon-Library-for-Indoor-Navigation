@@ -20,5 +20,13 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>&quot;Zum Finden von Ihrem Standort für die Indoor-Navigation brauchen wir Zugriff auf Ihren Standort. Alles wird auf Ihrem Gerät verarbeitet&quot;</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>&quot;Zum Finden von Ihrem Standort für die Indoor-Navigation brauchen wir Zugriff auf Ihren Standort. Alles wird auf Ihrem Gerät verarbeitet&quot;</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>&quot;Zum Finden von Ihrem Standort für die Indoor-Navigation brauchen wir Zugriff auf Bluetooth. Alles wird auf Ihrem Gerät verarbeitet&quot;</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>&quot;Zum Finden von Ihrem Standort für die Indoor-Navigation brauchen wir Zugriff auf Bluetooth. Alles wird auf Ihrem Gerät verarbeitet&quot;</string>
 </dict>
 </plist>
