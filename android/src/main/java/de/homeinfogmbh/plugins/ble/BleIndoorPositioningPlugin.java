@@ -35,6 +35,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
   private static final int REQUEST_ENABLE_BT = 24;
   static Beacon nearestBeacon;
   static Beacon[] allBeacons;
+  /** default UUID when not defined different via setUUID*/
   static String UUID = "e93bc627-b399-4d43-853d-76d79d65039f";
   BroadcastReceiver mBroadcastReceiver;
 
@@ -64,6 +65,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
   }
 
   private void startWatch(){
+    //enable bluetooth if available
     BluetoothManager bluetoothManager = this.getContext().getSystemService(BluetoothManager.class);
     BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
     if (bluetoothAdapter == null) {
@@ -76,17 +78,18 @@ public class BleIndoorPositioningPlugin extends Plugin {
       }
     }
 
+    //start intent for Forgroundservice scanning for beacons
     Intent serviceIntent = new Intent(getContext(), BleIndoorPositioning.class);
-    Log.d("start", "startIntent");
     serviceIntent.putExtra("inputExtra", "Via Bluetooth wird periodisch ihr Standort im Gebäude ermittelt, lokal auf Ihrem Gerät. ");
     ContextCompat.startForegroundService(getContext(), serviceIntent);
-    updateNearestBeacon();
 
+    // create broadcastreveicer lisiting for new beaconsdata noptificaion
     mBroadcastReceiver = new BroadcastReceiver(){
 
       @Override
       public void onReceive(Context context, Intent intent){
         String action = intent.getAction();
+        //new new data avalabale notify JS via updateNearestBeacon()
         if ("newData".equals(action)) {
           updateNearestBeacon();
         }
@@ -98,6 +101,9 @@ public class BleIndoorPositioningPlugin extends Plugin {
     getContext().registerReceiver(mBroadcastReceiver, filter);
   }
 
+  /**
+   * notify JS that new beacondata ist available
+   * */
   void updateNearestBeacon(){
     if(nearestBeacon == null){
       notifyListeners("updateBeaconsData", null);
@@ -117,18 +123,23 @@ public class BleIndoorPositioningPlugin extends Plugin {
     super.handleOnResume();
   }
 
+  /**
+   * start lisitening for beacons with given UUID
+   *
+   * */
   @PluginMethod
   public void startListening(@NonNull PluginCall call){
     //start call of
     startWatch();
-    Log.d("startL", "aaa");
     call.resolve();
   }
 
+  /**
+   * set UUID identifier fpor found beacons
+   * */
   @PluginMethod
   public void setUUID(@NonNull PluginCall call){
     String uuid = call.getString("UUID");
-    Log.d("setUUID", uuid);
     if(!call.getData().has("UUID")){
       call.resolve();
       return;
@@ -141,7 +152,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
 
 
   /**
-   *
+   *returns nearest beacon to JS
    * @param call Plugin call
    */
   @PluginMethod
@@ -151,7 +162,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
   }
 
   /**
-   *
+   * returns all beacons to JS
    * @param call Plugin call
    */
   @PluginMethod
@@ -170,7 +181,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
   }
 
   /**
-   * ask for permissions if not granted
+   * ask for permissions if not already granted
    */
   public void getPermissions(){
     for(String el:permissions){

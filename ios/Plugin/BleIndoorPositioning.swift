@@ -87,6 +87,7 @@ import CoreLocation
             }
         }
     }
+
     /**
      @returns true when new Data is available
      */

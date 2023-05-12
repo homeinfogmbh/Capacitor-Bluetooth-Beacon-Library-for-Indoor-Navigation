@@ -1,6 +1,6 @@
 import { WebPlugin } from '@capacitor/core';
 
-import type { BleIndoorPositioningPlugin } from './definitions';
+import type {BleIndoorPositioningPlugin, Floorplan} from './definitions';
 
 export class BleIndoorPositioningWeb
   extends WebPlugin
@@ -19,6 +19,18 @@ export class BleIndoorPositioningWeb
   }
 
   getNearestBeacon(): Promise<any> {
+    throw Error('not implemented');
+  }
+
+  findShortestPath(): string[] {
+    throw Error('not implemented');
+  }
+
+  getCurrentRoom(): Floorplan | null {
+    throw Error('not implemented');
+  }
+
+  loadData(): Promise<void> {
     throw Error('not implemented');
   }
 }

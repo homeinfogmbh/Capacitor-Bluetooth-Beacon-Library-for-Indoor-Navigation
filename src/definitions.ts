@@ -14,6 +14,7 @@ export interface BleIndoorPositioningPlugin {
       listenerFunc: (beaconData: Beacon ) => void,
   ): Promise<PluginListenerHandle> & PluginListenerHandle;
 }
+
 export interface Beacon {
   distance: number;
   serviceUuid: number;

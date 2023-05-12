@@ -3,8 +3,7 @@ import Capacitor
 import CoreLocation
 
 /**
- * Please read the Capacitor iOS Plugin Development Guide
- * here: https://capacitorjs.com/docs/plugins/ios
+ *
  */
 @objc(BleIndoorPositioningPlugin)
 public class BleIndoorPositioningPlugin: CAPPlugin {

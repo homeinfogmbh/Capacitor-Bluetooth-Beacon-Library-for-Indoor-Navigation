@@ -44,6 +44,7 @@ public class BleIndoorPositioning extends Service {
 
   /**
    * create notification channel to inform user of foreground service
+   * must be done for periodiocylly scanning
    * */
   private void createNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
