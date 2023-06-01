@@ -15,6 +15,9 @@ npx cap sync
 
 * [`getNearestBeacon()`](#getnearestbeacon)
 * [`getAllBeacons()`](#getallbeacons)
+* [`getCurrentRoom()`](#getcurrentroom)
+* [`loadMap(...)`](#loadmap)
+* [`findShortestPath(...)`](#findshortestpath)
 * [`setUUID(...)`](#setuuid)
 * [`startListening()`](#startlistening)
 * [`addListener('updateBeaconsData', ...)`](#addlistenerupdatebeaconsdata)
@@ -44,6 +47,45 @@ getAllBeacons() => Promise<[Beacon]>
 ```
 
 **Returns:** <code>Promise&lt;[Beacon]&gt;</code>
+
+--------------------
+
+
+### getCurrentRoom()
+
+```typescript
+getCurrentRoom() => Promise<string>
+```
+
+**Returns:** <code>Promise&lt;string&gt;</code>
+
+--------------------
+
+
+### loadMap(...)
+
+```typescript
+loadMap(options: { jsonMap: string; }) => Promise<void>
+```
+
+| Param         | Type                              |
+| ------------- | --------------------------------- |
+| **`options`** | <code>{ jsonMap: string; }</code> |
+
+--------------------
+
+
+### findShortestPath(...)
+
+```typescript
+findShortestPath(options: { start: string; end: string; }) => Promise<string[]>
+```
+
+| Param         | Type                                         |
+| ------------- | -------------------------------------------- |
+| **`options`** | <code>{ start: string; end: string; }</code> |
+
+**Returns:** <code>Promise&lt;string[]&gt;</code>
 
 --------------------
 
