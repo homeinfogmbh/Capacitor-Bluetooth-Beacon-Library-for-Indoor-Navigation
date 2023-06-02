@@ -26,13 +26,17 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import com.google.common.graph.MutableValueGraph;
 import com.google.common.graph.ValueGraphBuilder;
 
+import static java.lang.Math.toIntExact;
+
 import org.altbeacon.beacon.Beacon;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -55,20 +59,20 @@ public class BleIndoorPositioningPlugin extends Plugin {
 
   //@Permission
   private final String[] permissions = new String[]{
-    Manifest.permission.ACCESS_COARSE_LOCATION,
-    Manifest.permission.ACCESS_FINE_LOCATION,
-    Manifest.permission.BLUETOOTH_ADMIN,
-    Manifest.permission.BLUETOOTH,
-    Manifest.permission.BLUETOOTH_PRIVILEGED,
+          Manifest.permission.ACCESS_COARSE_LOCATION,
+          Manifest.permission.ACCESS_FINE_LOCATION,
+          Manifest.permission.BLUETOOTH_ADMIN,
+          Manifest.permission.BLUETOOTH,
+          Manifest.permission.BLUETOOTH_PRIVILEGED,
   };
 
   @RequiresApi(api = Build.VERSION_CODES.S)
   private final String[] permissions31 = new String[]{
-    Manifest.permission.BLUETOOTH_SCAN,
-    Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-    Manifest.permission.BLUETOOTH_CONNECT,
-    Manifest.permission.FOREGROUND_SERVICE,
-    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+          Manifest.permission.BLUETOOTH_SCAN,
+          Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+          Manifest.permission.BLUETOOTH_CONNECT,
+          Manifest.permission.FOREGROUND_SERVICE,
+          Manifest.permission.ACCESS_BACKGROUND_LOCATION
 
 
   };
@@ -166,10 +170,10 @@ public class BleIndoorPositioningPlugin extends Plugin {
 
   /**
    * return current room
-   * */
+   */
   @PluginMethod
   public void getCurrentRoom(@NonNull PluginCall call) {
-    String ret = findRoom().isPresent()?findRoom().get():"unknown room";
+    String ret = findRoom().isPresent() ? findRoom().get() : "unknown room";
     JSObject json = new JSObject();
     json.put("data", ret);
     call.resolve(json);
@@ -177,54 +181,53 @@ public class BleIndoorPositioningPlugin extends Plugin {
 
   /**
    * find current room based on nearest beacon
-   * */
+   */
   private Optional<String> findRoom() {
     Beacon currentNearestBeacon = nearestBeacon;
     //find current room name/identifier
     Optional<String> opt = Optional.ofNullable(roomSet.stream().filter(node ->
-      node.getId1().equals(currentNearestBeacon.getId1().toString()) &&
-        node.getId2().equals(currentNearestBeacon.getId2().toString()) &&
-        node.getId3().equals(currentNearestBeacon.getId3().toString())).findFirst().get().getName());
+            node.getId1().equals(currentNearestBeacon.getId1().toString()) &&
+                    node.getId2().equals(currentNearestBeacon.getId2().toString()) &&
+                    node.getId3().equals(currentNearestBeacon.getId3().toString())).findFirst().get().getName());
     return opt;
   }
 
   //load room map, create structure for finding rooms and shortest path available with Djisktra algorithm
   @PluginMethod
   public void loadMap(@NonNull PluginCall call) {
-    String map = call.getString("jsonMap");
+    org.json.JSONObject map = call.getData();
     this.graph = ValueGraphBuilder.undirected().build();
     try {
-      JSONParser parser = new JSONParser();
-      JSONObject obj = (JSONObject) parser.parse(map);
-      Log.d("My App", obj.toString());
-      obj.keySet().forEach(keyStr ->
-        {
-          Object keyvalue = obj.get(keyStr);
-          assert keyvalue != null;
-          String roomIdentifier = keyvalue.toString();
+      org.json.simple.parser.JSONParser parser = new JSONParser();
+      JSONObject obj = (JSONObject) parser.parse(map.toString());
+      obj.keySet().forEach(b ->
+      {
+        JSONArray dataArray = (JSONArray) obj.get(b);
+        dataArray.forEach(room -> {
+
+          assert room != null;
+          String roomIdentifier = Objects.requireNonNull(((JSONObject) room).get("roomIdentifier")).toString();
           AtomicReference<String> id1 = new AtomicReference<>();
           AtomicReference<String> id2 = new AtomicReference<>();
           AtomicReference<String> id3 = new AtomicReference<>();
-          //for nested objects iteration if required
-          if (keyvalue instanceof JSONObject){
-            //add room to roomSet
-            if(((JSONObject) keyvalue).containsKey("id1")){
-              ((JSONObject) keyvalue).keySet().forEach(k -> {
-                id1.set((String) ((JSONObject) k).get("id1"));
-                id2.set((String) ((JSONObject) k).get("id2"));
-                id3.set((String) ((JSONObject) k).get("id3"));
-                roomSet.add(new Node(roomIdentifier, id1.get(), id2.get(), id3.get()));
-              });
-            }
-            else{
-              //add nodes to djisktra algorithm
-              ((JSONObject) keyvalue).keySet().forEach(k -> graph.putEdgeValue( keyvalue.toString(),(String) Objects.requireNonNull(((JSONObject) k).get("neighbourIdentifier")),
-                (int) Objects.requireNonNull(((JSONObject) k).get("distance"))));
-            }
+          //add room to roomSet
+          JSONObject beacon = (JSONObject) ((JSONObject) room).get("beacon");
+          assert beacon != null;
+          id1.set((String) beacon.get("id1"));
+          id2.set((String) beacon.get("id2"));
+          id3.set((String) beacon.get("id3"));
+          roomSet.add(new Node(roomIdentifier, id1.get(), id2.get(), id3.get()));
 
-          }
-
+          //add nodes to djisktra algorithm
+          JSONArray neighbours = (JSONArray) ((JSONObject) room).get("nextRooms");
+          neighbours.forEach(k ->
+                  graph.putEdgeValue(roomIdentifier,
+                          (String) Objects.requireNonNull(((JSONObject) k).get("neighbourIdentifier")),
+                          toIntExact((long) Objects.requireNonNull(((JSONObject) k).get("distance")))
+                  )
+          );
         });
+      });
 
     } catch (Throwable t) {
       Log.d("createMap", "Could not parse malformed JSON: \"" + map + "\"");
@@ -236,7 +239,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
 
   /**
    * return shortest path back to JS
-   * */
+   */
   @PluginMethod
   public void findShortestPath(@NonNull PluginCall call) {
     try {
@@ -247,7 +250,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
       assert ret != null;
       p.put("path", ret.toArray(new String[0]));
       call.resolve(p);
-    }catch (Exception e) {
+    } catch (Exception e) {
       call.reject(e.toString());
     }
   }
@@ -362,5 +365,4 @@ public class BleIndoorPositioningPlugin extends Plugin {
     Arrays.stream(capBeacons).forEach(beacon -> beaconsData.put(beacon.id1.toString(), formatReturnedData(beacon)));
     return beaconsData;
   }
-
 }
