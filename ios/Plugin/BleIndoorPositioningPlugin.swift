@@ -31,6 +31,24 @@ public class BleIndoorPositioningPlugin: CAPPlugin {
     }
 
 
+    @objc func loadMap(_ call: CAPPluginCall){
+        let map = call.getString("jsonMap") ?? ""
+
+
+        call.resolve()
+    }
+
+
+    @objc func getCurrentRoom(_ call: CAPPluginCall){
+        let map = call.getString("jsonMap") ?? ""
+
+    }
+
+    @objc func findShortestPath(_ call: CAPPluginCall){
+        let map = call.getString("jsonMap") ?? ""
+
+    }
+
 
     @objc func setUUID(_ call: CAPPluginCall){
         let uuid = call.getString("UUID") ?? ""

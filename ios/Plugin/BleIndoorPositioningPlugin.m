@@ -8,4 +8,7 @@ CAP_PLUGIN(BleIndoorPositioningPlugin, "BleIndoorPositioning",
            CAP_PLUGIN_METHOD(getNearestBeacon, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(startListening, CAPPluginReturnPromise);
            CAP_PLUGIN_METHOD(setUUID, CAPPluginReturnPromise);
+           CAP_PLUGIN_METHOD(loadMap, CAPPluginReturnPromise);
+           CAP_PLUGIN_METHOD(getCurrentRoom, CAPPluginReturnPromise);
+           CAP_PLUGIN_METHOD(findShortestPath, CAPPluginReturnPromise);
 )
