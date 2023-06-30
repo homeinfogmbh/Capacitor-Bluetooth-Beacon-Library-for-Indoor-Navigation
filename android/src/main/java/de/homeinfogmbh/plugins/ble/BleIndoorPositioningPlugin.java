@@ -83,7 +83,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
   }
 
 
-  private void startWatch() {
+  private void startWatch(PluginCall call) {
     //enable bluetooth if available
     BluetoothManager bluetoothManager = this.getContext().getSystemService(BluetoothManager.class);
     BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
@@ -93,7 +93,8 @@ public class BleIndoorPositioningPlugin extends Plugin {
     } else {
       if (!bluetoothAdapter.isEnabled()) {
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(null, enableBtIntent, REQUEST_ENABLE_BT);
+        startActivityForResult(call, enableBtIntent, REQUEST_ENABLE_BT);
+        call.resolve();
       }
     }
 
@@ -148,7 +149,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
   @PluginMethod
   public void startListening(@NonNull PluginCall call) {
     //start call of
-    startWatch();
+    startWatch(call);
     call.resolve();
   }
 
@@ -248,8 +249,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
       String end = call.getString("end");
       List<String> ret = Dijkstra.findShortestPath(this.graph, start, end);
       assert ret != null;
-      p.put("path", Arrays.toString(ret.toArray(new String[0])));
-      assert true == true;
+      p.put("path", ret.toArray(new String[0]));
       call.resolve(p);
     } catch (Exception e) {
       call.reject(e.toString());
