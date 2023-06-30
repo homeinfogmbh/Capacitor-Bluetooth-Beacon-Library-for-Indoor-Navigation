@@ -5,7 +5,7 @@ export interface BleIndoorPositioningPlugin {
   getAllBeacons(): Promise<[Beacon]>;
   getCurrentRoom():Promise<string>;
   loadMap(options: {jsonMap: string}):Promise<void>;
-  findShortestPath(options: {start: string, end: string}): Promise<string[]>;
+  findShortestPath(options: {start: string, end: string}): Promise<[string]>;
   setUUID(options: {UUID: String}): Promise<void>;
   startListening(): Promise<void>;
   addListener(
