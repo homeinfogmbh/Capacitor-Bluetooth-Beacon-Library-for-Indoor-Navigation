@@ -173,7 +173,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
    * return current room
    */
   @PluginMethod
-  public void getCurrentRoom(@NonNull PluginCall call) {
+  public void getCurrentRoom(final PluginCall call) {
     String ret = findRoom().isPresent() ? findRoom().get() : "unknown room";
     JSObject json = new JSObject();
     json.put("data", ret);
@@ -250,6 +250,7 @@ public class BleIndoorPositioningPlugin extends Plugin {
       List<String> ret = Dijkstra.findShortestPath(this.graph, start, end);
       assert ret != null;
       p.put("path", ret.toArray(new String[0]));
+      notifyListeners("pathUpdate", p);
       call.resolve(p);
     } catch (Exception e) {
       call.reject(e.toString());

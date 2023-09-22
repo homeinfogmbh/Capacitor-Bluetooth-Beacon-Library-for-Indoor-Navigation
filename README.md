@@ -54,10 +54,10 @@ getAllBeacons() => Promise<[Beacon]>
 ### getCurrentRoom()
 
 ```typescript
-getCurrentRoom() => Promise<string>
+getCurrentRoom() => Promise<{ data: string; }>
 ```
 
-**Returns:** <code>Promise&lt;string&gt;</code>
+**Returns:** <code>Promise&lt;{ data: string; }&gt;</code>
 
 --------------------
 
@@ -78,14 +78,14 @@ loadMap(options: { jsonMap: string; }) => Promise<void>
 ### findShortestPath(...)
 
 ```typescript
-findShortestPath(options: { start: string; end: string; }) => Promise<[string]>
+findShortestPath(options: { start: string; end: string; }) => Promise<{ data: [string]; }>
 ```
 
 | Param         | Type                                         |
 | ------------- | -------------------------------------------- |
 | **`options`** | <code>{ start: string; end: string; }</code> |
 
-**Returns:** <code>Promise&lt;[string]&gt;</code>
+**Returns:** <code>Promise&lt;{ data: [string]; }&gt;</code>
 
 --------------------
 

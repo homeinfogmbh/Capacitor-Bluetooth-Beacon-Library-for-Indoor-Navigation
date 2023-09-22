@@ -22,7 +22,7 @@ export class BleIndoorPositioningWeb
     throw Error('not implemented');
   }
 
-  findShortestPath(options: {start: string, end: string}): Promise<string[]> {
+  findShortestPath(options: {start: string, end: string}): Promise<{data:[string]}> {
     const a = options.start;
     const b = options.end;
     const c = a.concat(b);

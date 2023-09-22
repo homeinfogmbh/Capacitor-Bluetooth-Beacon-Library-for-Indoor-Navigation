@@ -59,7 +59,7 @@ public class Dijkstra {
         }
 
         // Calculate total distance from start to neighbor via current node
-        int distance = graph.edgeValue(node, neighbor).orElseThrow(IllegalStateException::new);
+        int distance = graph.edgeValueOrDefault(node, neighbor, 10000000);
         int totalDistance = nodeWrapper.getTotalDistance() + distance;
 
         // Neighbor not yet discovered?
