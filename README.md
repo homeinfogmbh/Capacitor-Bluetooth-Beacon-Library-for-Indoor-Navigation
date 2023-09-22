@@ -78,14 +78,14 @@ loadMap(options: { jsonMap: string; }) => Promise<void>
 ### findShortestPath(...)
 
 ```typescript
-findShortestPath(options: { start: string; end: string; }) => Promise<{ data: [string]; }>
+findShortestPath(options: { start: string; end: string; }) => Promise<{ data: string; }>
 ```
 
 | Param         | Type                                         |
 | ------------- | -------------------------------------------- |
 | **`options`** | <code>{ start: string; end: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ data: [string]; }&gt;</code>
+**Returns:** <code>Promise&lt;{ data: string; }&gt;</code>
 
 --------------------
 

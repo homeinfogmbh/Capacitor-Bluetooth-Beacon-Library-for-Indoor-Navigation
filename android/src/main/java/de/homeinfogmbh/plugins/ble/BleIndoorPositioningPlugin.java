@@ -249,8 +249,13 @@ public class BleIndoorPositioningPlugin extends Plugin {
       String end = call.getString("end");
       List<String> ret = Dijkstra.findShortestPath(this.graph, start, end);
       assert ret != null;
-      p.put("path", ret.toArray(new String[0]));
-      notifyListeners("pathUpdate", p);
+      StringBuilder s = new StringBuilder();
+      ret.forEach(el -> {
+        s.append(el);
+        s.append(",");
+      });
+      s.replace(s.length()-1, s.length(), "");
+      p.put("data", "[" + s + "]");
       call.resolve(p);
     } catch (Exception e) {
       call.reject(e.toString());
